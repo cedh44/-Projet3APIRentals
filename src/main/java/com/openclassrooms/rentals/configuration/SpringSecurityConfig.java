@@ -1,40 +1,69 @@
 package com.openclassrooms.rentals.configuration;
 
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+public class SpringSecurityConfig {
 
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication()
-			.withUser("springuser").password(passwordEncoder().encode("spring123"))
-			.roles("USER")
-			.and()
-			.withUser("springadmin").password(passwordEncoder().encode("admin123"))
-			.roles("ADMIN", "USER");
+	private final RsaKeyProperties rsaKeys;
+
+	public SpringSecurityConfig(RsaKeyProperties rsaKeys) {
+		this.rsaKeys = rsaKeys;
 	}
-	
-	@Override 
-	public void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
-			.antMatchers("/admin").hasRole("ADMIN")
-			.antMatchers("/user").hasRole("USER")
-			.anyRequest().authenticated()
-			.and()
-			.formLogin();
-	}
-	
+
+	//User par défaut
 	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
+	public InMemoryUserDetailsManager users(){
+		return new InMemoryUserDetailsManager(
+				User.withUsername("user")
+						.password("{noop}password")
+						.authorities("read")
+						.build()
+		);
+	}
+
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		return http
+				.csrf(csrf -> csrf.disable()) // If you are only creating a service that is used by non-browser clients, you will likely want to disable CSRF protection
+				.authorizeHttpRequests(auth -> auth.anyRequest().authenticated()) // The user should be authenticated for any request in the application
+				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt) //Enable Jwt-encoded bearer token support
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //stateless (pas de session, mais token)
+				.httpBasic(withDefaults()) //Form login to authenticate users
+				.build();
+	}
+
+	@Bean
+	JwtDecoder jwtDecoder(){ //Decode
+		return NimbusJwtDecoder.withPublicKey(rsaKeys.publicKey()).build();
+	}
+
+	@Bean
+	JwtEncoder jwtEncoder(){
+		JWK jwk = new RSAKey.Builder(rsaKeys.publicKey()).privateKey(rsaKeys.privateKey()).build();
+		JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+		return new NimbusJwtEncoder(jwks);
 	}
 }

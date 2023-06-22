@@ -4,6 +4,8 @@ import javax.annotation.security.RolesAllowed;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+//TODO : voir à supprimer à la fin du projet
+
 @RestController
 public class LoginController {
 

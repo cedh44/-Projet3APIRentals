@@ -48,7 +48,7 @@ public class SpringSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable()) // If you are only creating a service that is used by non-browser clients, you will likely want to disable CSRF protection
-                .authorizeHttpRequests(auth -> auth.antMatchers("/api/auth/register/**", "/api/auth/login/**").permitAll().anyRequest().authenticated())
+                .authorizeHttpRequests(auth -> auth.antMatchers("/api/auth/register/**", "/api/auth/login/**","/v2/api-docs/**","/swagger-ui/**","/swagger-resources/**").permitAll().anyRequest().authenticated())
                 //.authorizeHttpRequests(auth -> auth.anyRequest().authenticated()) // The user should be authenticated for any request in the application //TODO : à voir si à supprimer après les tests
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt) //Enable Jwt-encoded bearer token support
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //stateless (pas de session, mais token)
@@ -60,7 +60,6 @@ public class SpringSecurityConfig {
     JwtDecoder jwtDecoder() { //Decode
         return NimbusJwtDecoder.withPublicKey(rsaKeys.publicKey()).build();
     }
-
 
     @Bean
     JwtEncoder jwtEncoder() {

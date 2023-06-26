@@ -2,24 +2,26 @@ package com.openclassrooms.rentals.model;
 
 import com.sun.istack.NotNull;
 import lombok.Data;
+
 import javax.persistence.*;
 import java.util.Date;
 
 @Data //Annotation Lombok qui gère setter et getter
 @Entity //Annotation qui indique que la classe correspond à une table de la base de données
-@Table(name = "users") //Table users
-public class User {
+@Table(name = "messages") //Table des rentals
+public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotNull
-    private String email;
+    @Column(name="rental_id")
+    private int rentalId;
 
-    private String name;
-
+    @Column(name="user_id")
     @NotNull
-    private String password;
+    private int userId;
+
+    private String message;
 
     @Column(name="created_at")
     private Date createdAt;

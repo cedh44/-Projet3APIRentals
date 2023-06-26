@@ -14,15 +14,21 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
     private static final DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+   //User creation
     public User createUser(User user) {
         user.setCreatedAt(new Date()); //Positionne la date du jour
         User createdUser = userRepository.save(user);
         return createdUser;
     }
 
-    //Pour le login, faire un find
-    public User findUser(User user){
-        return userRepository.findByEmail(user.getEmail());
+    //Find user by email with email as parameter
+    public User findUserByEmail(String email){
+        return userRepository.findByEmail(email);
     }
 
+    //Find user by email and password (for login)
+    public User loginUser(User user){
+        return userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
+    }
 }

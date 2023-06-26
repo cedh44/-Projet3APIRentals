@@ -16,9 +16,6 @@ import java.util.Map;
 
 @RestController
 public class AuthController {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AuthController.class);
-
     private final TokenService tokenService;
 
     public AuthController(TokenService tokenService){
@@ -45,9 +42,7 @@ public class AuthController {
         else {
             User userCreated = userService.createUser(user);
             if (userCreated != null) {
-                LOG.debug("Token requested for user : '{}'", user.getEmail());
                 String token = tokenService.generateToken(user.getEmail());
-                LOG.debug("Token granted {}", token);
                 return token;
             } else {
                 return "error";

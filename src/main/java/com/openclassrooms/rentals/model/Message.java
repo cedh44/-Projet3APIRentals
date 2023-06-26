@@ -2,7 +2,6 @@ package com.openclassrooms.rentals.model;
 
 import com.sun.istack.NotNull;
 import lombok.Data;
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -14,12 +13,9 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name="rental_id")
-    private int rentalId;
+    private int rental_id;
 
-    @Column(name="user_id")
-    @NotNull
-    private int userId;
+    private int user_id;
 
     private String message;
 

@@ -4,14 +4,12 @@ import com.openclassrooms.rentals.model.User;
 import com.openclassrooms.rentals.service.TokenService;
 import com.openclassrooms.rentals.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.rmi.ServerException;
 import java.util.Map;
@@ -34,9 +32,7 @@ public class AuthController {
     public String login(@RequestBody User user){
         User userFound = userService.loginUser(user);
         if(userFound != null) {
-            LOG.debug("Token requested for user : '{}'", userFound.getEmail());
             String token = tokenService.generateToken(userFound.getEmail());
-            LOG.debug("Token granted {}", token);
             return token;
         } else {
             return "error";
@@ -44,7 +40,7 @@ public class AuthController {
     }
     @Operation(summary = "Register a new user", description = "Check if user exists, create a user and return a token")
     @PostMapping("/api/auth/register") //Create a new user
-    public String createUser(@RequestBody User user) {
+    public String register(@RequestBody User user) {
         if (userService.findUserByEmail(user.getEmail()) != null) return "error"; //User exist
         else {
             User userCreated = userService.createUser(user);
@@ -61,9 +57,14 @@ public class AuthController {
 
     @Operation(summary = "Get user informations", description = "return id, name, email, date creation and date update of user connected")
     @GetMapping("/api/auth/me") //Decode token, find user in BDD and return id, name, email, created_at and updated_at
-    public User getUser(@RequestBody Authentication authentication) {
-        String email = tokenService.decodeToken(authentication);
-        return userService.findUserByEmail(email);
+    public User getUser(@RequestHeader("Authorization") String token) {
+        //Decode token and extract email
+        String email = tokenService.getEmailFromToken(token);
+        //Find user in database
+        User user = userService.findUserByEmail(email);
+        //Security  : set password to ""
+        user.setPassword("");
+        return user;
     }
 
 }

@@ -13,12 +13,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotNull
     private String email;
 
     private String name;
 
-    @NotNull
     private String password;
 
     @Column(name="created_at")

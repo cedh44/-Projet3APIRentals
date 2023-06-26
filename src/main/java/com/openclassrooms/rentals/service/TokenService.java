@@ -1,10 +1,7 @@
 package com.openclassrooms.rentals.service;
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
@@ -38,9 +35,22 @@ public class TokenService {
         return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
-    public String decodeToken(Authentication authentication){
-        JwtAuthenticationToken token = (JwtAuthenticationToken) authentication;
-        Map<String, Object> attributes = token.getTokenAttributes();
-        return attributes.get("email").toString();
+    //Extract email from token
+    public String getEmailFromToken(String token){
+        token = deleteBearerFromToken(token);
+        if (token != null) {
+            Jwt claims = this.decoder.decode(token);
+            return claims.getSubject();
+        } else {
+            return "";
+        }
+    }
+
+    //Delete "Bearer" from token
+    public String deleteBearerFromToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            return token.substring(7);
+        }
+        return null;
     }
 }

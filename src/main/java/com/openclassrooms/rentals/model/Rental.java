@@ -12,21 +12,19 @@ import java.util.Date;
 public class Rental {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     private String name;
 
-    private Number surface;
+    private Double surface;
 
-    private Number price;
+    private Double price;
 
     private String picture;
 
     private String description;
 
-    @Column(name="owner_id")
-    @NotNull
-    private int ownerId;
+    private Long owner_id;
 
     @Column(name="created_at")
     private Date createdAt;

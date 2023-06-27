@@ -11,11 +11,11 @@ import java.util.Date;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    private int rental_id;
+    private Long rental_id;
 
-    private int user_id;
+    private Long user_id;
 
     private String message;
 

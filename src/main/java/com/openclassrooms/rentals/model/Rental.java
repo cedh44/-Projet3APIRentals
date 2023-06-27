@@ -12,23 +12,23 @@ import java.util.Date;
 public class Rental {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    public Long id;
 
-    private String name;
+    public String name;
 
-    private Double surface;
+    public Double surface;
 
-    private Double price;
+    public Double price;
 
-    private String picture;
+    public String picture;
 
-    private String description;
+    public String description;
 
-    private Long owner_id;
+    public Long owner_id;
 
     @Column(name="created_at")
-    private Date createdAt;
+    public Date createdAt;
 
     @Column(name="updated_at")
-    private Date updatedAt;
+    public Date updatedAt;
 }

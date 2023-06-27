@@ -34,23 +34,25 @@ public class RentalService {
 
     //Create rental
     public Rental createRental(Long ownerId, Rental rental){
+        //Set create date
         rental.setCreatedAt(new Date());
         rental.setOwner_id(ownerId);
         return rentalRepository.save(rental);
     }
 
     //Update rental
-    public Rental updateRental(Long rentalId, Rental freshRental) throws IllegalAccessException {
+    public Rental updateRental(Long rentalId, Long ownerId, Rental freshRental) {
         Rental rentalToUpdate = rentalRepository.findById(rentalId).orElse(null);
-        if(rentalToUpdate != null){
-            Field[] fieldsFreshRental = freshRental.getClass().getDeclaredFields();
-            for (Field field : fieldsFreshRental) {
-                Object freshValue = field.get(freshRental);
-                if (freshValue != null) {
-                    field.set(rentalToUpdate, freshValue);
-                }
-            }
-            rentalToUpdate.setUpdatedAt(new Date()); //Update date as today
+        //Check if rentals in DBB and same owner
+        if(rentalToUpdate != null && ownerId.equals(rentalToUpdate.getOwner_id())){
+            //Update datas rental if new
+            if(freshRental.getName()!=null) rentalToUpdate.setName(freshRental.getName());
+            if(freshRental.getSurface()!=null) rentalToUpdate.setSurface(freshRental.getSurface());
+            if(freshRental.getPrice() != null) rentalToUpdate.setPrice(freshRental.getPrice());
+            if(freshRental.getPicture() != null) rentalToUpdate.setPicture(freshRental.getPicture());
+            if(freshRental.getDescription() != null)rentalToUpdate.setDescription(freshRental.getDescription());
+            //Set update date
+            rentalToUpdate.setUpdatedAt(new Date());
             return rentalRepository.save(rentalToUpdate);
         } else {
             return new Rental();

@@ -47,14 +47,14 @@ public class RentalController {
 
     @Operation(summary = "Update rental", description = "Update rental by Id in url and  with parameters(name, surface, price, picture and description) and owner_id from token")
     @PutMapping("/api/rentals/{id}")
-    public Rental updateRentalById(@PathVariable("id") Long id, @ModelAttribute Rental rental) throws IllegalAccessException {
-        try{
-            Rental rentalUpdated = rentalService.updateRental(id, rental);
-            return Objects.requireNonNullElseGet(rentalUpdated, Rental::new);
-        } catch (Exception e){
-            System.out.println("Error while updating rental : " + e.getMessage());
-            return new Rental();
-        }
+    public Rental updateRentalById(@PathVariable("id") Long id, @RequestHeader("Authorization") String token, @ModelAttribute Rental rental){
+        //Get user from token and Users table
+        String email = tokenService.getEmailFromToken(token);
+        User user = userService.findUserByEmail(email);
+        //Update rental in database
+        Rental rentalUpdated = rentalService.updateRental(id, user.getId(), rental);
+        //Return rental update, of new rental if KO
+        return Objects.requireNonNullElseGet(rentalUpdated, Rental::new);
     }
 
 

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Objects;
+
 @RestController
 public class MessageController {
     @Autowired
@@ -19,10 +21,6 @@ public class MessageController {
     @PostMapping("/api/messages")
     public Message createMessage(@RequestBody Message message){
         Message messageCreated = messageService.createMessage(message);
-        if(messageCreated != null)  {
-            return message;
-        } else {
-            return new Message();
-        }
+        return Objects.requireNonNullElseGet(messageCreated, Message::new);
     }
 }

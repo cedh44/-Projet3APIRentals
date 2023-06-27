@@ -12,10 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MessageController {
-    private final TokenService tokenService;
-    public MessageController(TokenService tokenService){
-        this.tokenService = tokenService;
-    }
     @Autowired
     private MessageService messageService;
 

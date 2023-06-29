@@ -1,9 +1,7 @@
 package com.openclassrooms.rentals.service;
 
 import com.openclassrooms.rentals.model.Message;
-import com.openclassrooms.rentals.model.User;
 import com.openclassrooms.rentals.repository.MessageRepository;
-import com.openclassrooms.rentals.repository.UserRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

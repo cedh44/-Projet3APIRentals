@@ -12,9 +12,9 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column(nullable = false)
     private Long rental_id;
-
+    @Column(nullable = false)
     private Long user_id;
 
     private String message;

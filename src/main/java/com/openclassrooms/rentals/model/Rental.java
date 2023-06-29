@@ -1,6 +1,5 @@
 package com.openclassrooms.rentals.model;
 
-import com.sun.istack.NotNull;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +26,7 @@ public class Rental {
     private String picture;
 
     private String description;
-
+    @Column(nullable = false)
     private Long owner_id;
 
     @Column(name="created_at")

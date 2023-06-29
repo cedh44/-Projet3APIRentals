@@ -1,6 +1,7 @@
 package com.openclassrooms.rentals.model;
 
-import com.sun.istack.NotNull;
+
+
 import lombok.Data;
 import javax.persistence.*;
 import java.util.Date;
@@ -12,11 +13,11 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column(nullable = false)
     private String email;
 
     private String name;
-
+    @Column(nullable = false)
     private String password;
 
     @Column(name="created_at")

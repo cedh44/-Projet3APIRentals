@@ -4,15 +4,8 @@ import com.openclassrooms.rentals.model.User;
 import com.openclassrooms.rentals.service.TokenService;
 import com.openclassrooms.rentals.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import org.apache.tomcat.util.http.parser.Authorization;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.rmi.ServerException;
-import java.util.Map;
 
 @RestController
 public class AuthController {
@@ -38,15 +31,15 @@ public class AuthController {
     @Operation(summary = "Register a new user", description = "Check if user exists, create a user and return a token")
     @PostMapping("/api/auth/register") //Create a new user
     public String register(@RequestBody User user) {
-        if (userService.findUserByEmail(user.getEmail()) != null) return "error"; //User exist
-        else {
-            User userCreated = userService.createUser(user);
-            if (userCreated != null) {
-                String token = tokenService.generateToken(user.getEmail());
-                return token;
-            } else {
-                return "error";
-            }
+        //Name is mandatory to create a user. For email and password, checked by @Column(nullable = false) in User class
+        if(user.getName() == null) return "Name is mandatory";
+        //TODO : refaire les tests ici dont les tests de nullité
+        if (userService.existsByEmail(user.getEmail())) return "error"; //User exist
+        User userCreated = userService.createUser(user);
+        if (userCreated != null) {
+            return tokenService.generateToken(user.getEmail());
+        } else {
+            return "error";
         }
     }
 

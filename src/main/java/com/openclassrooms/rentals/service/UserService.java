@@ -5,6 +5,7 @@ import com.openclassrooms.rentals.repository.UserRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,6 +26,10 @@ public class UserService {
     //Find user with email as parameter
     public User findUserByEmail(String email){
         return userRepository.findByEmail(email);
+    }
+
+    public boolean existsByEmail(String email){
+        return userRepository.existsByEmail(email);
     }
 
     //Find user by email and password (for login)

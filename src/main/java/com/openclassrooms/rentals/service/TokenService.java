@@ -45,8 +45,8 @@ public class TokenService {
 
     //Delete "Bearer" from token
     public String deleteBearerFromToken(String token) {
-        if (token != null && token.startsWith("Bearer ")) {
-            return token.substring(7);
+        if (token != null) {
+            if(token.startsWith("Bearer ")) return token.substring(7);
         }
         return null;
     }

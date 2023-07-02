@@ -34,7 +34,6 @@ public class AuthController {
     public String register(@RequestBody User user) {
         //Name is mandatory to create a user. For email and password, checked by @Column(nullable = false) in User class
         if (user.getName() == null) return "Name is mandatory";
-        //TODO : refaire les tests ici dont les tests de nullité
         if (userService.existsByEmail(user.getEmail())) return "error"; //User exist
         User userCreated = userService.createUser(user);
         if (userCreated != null) {

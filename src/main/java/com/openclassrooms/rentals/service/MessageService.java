@@ -18,10 +18,10 @@ public class MessageService {
     private static final DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     //Message creation
-    public Message createMessage(Message message) {
+    public Message createMessage(Long userId, Message message) {
+        message.setUser_id(userId);
         message.setCreatedAt(new Date()); //Positionne la date du jour
-        Message createdMessage = messageRepository.save(message);
-        return createdMessage;
+        return messageRepository.save(message);
     }
 
 

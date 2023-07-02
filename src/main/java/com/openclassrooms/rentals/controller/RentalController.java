@@ -24,19 +24,19 @@ public class RentalController {
 
     @Operation(summary = "Get all rentals", description = "Return all rentals")
     @GetMapping("/api/rentals")
-    public Iterable<Rental> getAllRentals(){
-            return rentalService.getAll();
+    public Iterable<Rental> getAllRentals(@RequestHeader("Authorization") String token) {
+        return rentalService.getAll();
     }
 
     @Operation(summary = "Get rental by Id", description = "Return rental by Id")
     @GetMapping("/api/rentals/{id}")
-    public Rental getRentalById(@PathVariable("id") Long id){
+    public Rental getRentalById(@RequestHeader("Authorization") String token, @PathVariable("id") Long id) {
         return rentalService.getRental(id);
     }
 
     @Operation(summary = "Create rental", description = "Create rental with parameters (name, surface, price, picture and description) and owner_id from token")
     @PostMapping("/api/rentals")
-    public Rental createRental(@RequestHeader("Authorization") String token, @ModelAttribute Rental rental){
+    public Rental createRental(@RequestHeader("Authorization") String token, @ModelAttribute Rental rental) {
         //Get user from token and Users table
         String email = tokenService.getEmailFromToken(token);
         User user = userService.findUserByEmail(email);
@@ -47,7 +47,7 @@ public class RentalController {
 
     @Operation(summary = "Update rental", description = "Update rental by Id in url and  with parameters(name, surface, price, picture and description) and owner_id from token")
     @PutMapping("/api/rentals/{id}")
-    public Rental updateRentalById(@PathVariable("id") Long id, @RequestHeader("Authorization") String token, @ModelAttribute Rental rental){
+    public Rental updateRentalById(@PathVariable("id") Long id, @RequestHeader("Authorization") String token, @ModelAttribute Rental rental) {
         //Get user from token and Users table
         String email = tokenService.getEmailFromToken(token);
         User user = userService.findUserByEmail(email);

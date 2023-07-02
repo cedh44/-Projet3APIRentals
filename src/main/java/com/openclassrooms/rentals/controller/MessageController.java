@@ -4,10 +4,12 @@ import com.openclassrooms.rentals.model.Message;
 import com.openclassrooms.rentals.model.User;
 import com.openclassrooms.rentals.service.MessageService;
 import com.openclassrooms.rentals.service.TokenService;
+import com.openclassrooms.rentals.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Objects;
@@ -16,11 +18,18 @@ import java.util.Objects;
 public class MessageController {
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private TokenService tokenService;
 
     @Operation(summary = "Message", description = "Send a message with parameters : rental_id, user_id and message")
     @PostMapping("/api/messages")
-    public Message createMessage(@RequestBody Message message){
-        Message messageCreated = messageService.createMessage(message);
+    public Message createMessage(@RequestHeader("Authorization") String token, @RequestBody Message message){
+        //Get user from token and Users table
+        String email = tokenService.getEmailFromToken(token);
+        User user = userService.findUserByEmail(email);
+        Message messageCreated = messageService.createMessage(user.getId(), message);
         return Objects.requireNonNullElseGet(messageCreated, Message::new);
     }
 }

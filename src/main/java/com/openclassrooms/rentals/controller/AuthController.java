@@ -11,28 +11,29 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final TokenService tokenService;
 
-    public AuthController(TokenService tokenService){
+    public AuthController(TokenService tokenService) {
         this.tokenService = tokenService;
     }
 
     @Autowired
     private UserService userService;
+
     @Operation(summary = "Login", description = "Allow a user to log in and return a token")
     @PostMapping("/api/auth/login")
-    public String login(@RequestBody User user){
+    public String login(@RequestBody User user) {
         User userFound = userService.loginUser(user);
-        if(userFound != null) {
-            String token = tokenService.generateToken(userFound.getEmail());
-            return token;
+        if (userFound != null) {
+            return tokenService.generateToken(userFound.getEmail());
         } else {
             return "error";
         }
     }
+
     @Operation(summary = "Register a new user", description = "Check if user exists, create a user and return a token")
     @PostMapping("/api/auth/register") //Create a new user
     public String register(@RequestBody User user) {
         //Name is mandatory to create a user. For email and password, checked by @Column(nullable = false) in User class
-        if(user.getName() == null) return "Name is mandatory";
+        if (user.getName() == null) return "Name is mandatory";
         //TODO : refaire les tests ici dont les tests de nullité
         if (userService.existsByEmail(user.getEmail())) return "error"; //User exist
         User userCreated = userService.createUser(user);

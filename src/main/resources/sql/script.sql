@@ -41,9 +41,9 @@ ALTER TABLE `MESSAGES` ADD FOREIGN KEY (`user_id`) REFERENCES `USERS` (`id`);
 ALTER TABLE `MESSAGES` ADD FOREIGN KEY (`rental_id`) REFERENCES `RENTALS` (`id`);
 
 INSERT INTO USERS (email, name, password, created_at) VALUES
-  ('toto@gmail.com', 'toto', 'toto123', NOW()),
-  ('titi@gmail.com', 'titi', 'titi123', NOW()),
-  ('tata@gmail.com', 'tata', 'tata123', NOW());
+  ('toto@gmail.com', 'toto', '$2a$10$lylN8VKwYVDpJeyL0aP.Re3TriFYQHoQ4kGlNKsoA14lPu2xQREnK', NOW()),
+  ('titi@gmail.com', 'titi', '$2a$10$lylN8VKwYVDpJeyL0aP.Re3TriFYQHoQ4kGlNKsoA14lPu2xQREnK', NOW()),
+  ('tata@gmail.com', 'tata', '$2a$10$lylN8VKwYVDpJeyL0aP.Re3TriFYQHoQ4kGlNKsoA14lPu2xQREnK', NOW());
 
 INSERT INTO RENTALS (name, surface, price, picture, description, owner_id, created_at) VALUES
   ('location1', 20, 230, 'https://blog.technavio.org/wp-content/uploads/2018/12/Online-House-Rental-Sites.jpg', 'chambre chez l habitant', 1, NOW()),

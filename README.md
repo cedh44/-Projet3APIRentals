@@ -4,11 +4,12 @@ Cette application est l'API d'un portail de mise en relation entre les futurs lo
 
 ## Installation
 
-Pré-requis : il est nécessaire d'avoir une base mysql intitulée "rentals".
+Pré-requis : il est nécessaire d'avoir une base mysql intitulée "rentals", et d'un user avec les droits sur la base.
 
 1. Clonez le dépôt git avec la commande suivante dans un terminal : `git clone https://github.com/cedh44/Projet3APIRentals`
 2. Installation des dépendances et compilation : placez vous dans le répertoire racine du projet et tapez `mvn clean install`
 3. Appliquez le script sql suivant, à la racine du projet, à l'aide de la commande suivante : mysql -u root -p rentals < src/main/resources/sql/script.sql
+4. Modifier le fichier application.properties pour ajouter le user/mot de passe mysql aux propriétés spring.datasource.username et spring.datasource.password
 
 ## Lancer l'application
 
@@ -21,7 +22,7 @@ L'API est accessible à l'url suivante : http://localhost:8080/
 
 ## Documentation - Swagger
 
-La documentation de l'application, sous forme de swagger, est disponible à l'url suivante : http://localhost:8080/swagger-ui/
+La documentation de l'application, sous forme de swagger, est disponible à l'url suivante depuis un navigateur : http://localhost:8080/swagger-ui/
 
 ## Technologies
 - Spring Boot

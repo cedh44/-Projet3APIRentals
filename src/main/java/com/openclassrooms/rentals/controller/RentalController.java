@@ -25,13 +25,13 @@ public class RentalController {
     @Operation(summary = "Get all rentals", description = "Return all rentals")
     @GetMapping("/api/rentals")
     public Iterable<Rental> getAllRentals(@RequestHeader("Authorization") String token) {
-        return rentalService.getAll();
+        return rentalService.getAll(); //Return all rentals from database
     }
 
     @Operation(summary = "Get rental by Id", description = "Return rental by Id")
     @GetMapping("/api/rentals/{id}")
     public Rental getRentalById(@RequestHeader("Authorization") String token, @PathVariable("id") Long id) {
-        return rentalService.getRental(id);
+        return rentalService.getRental(id); //return rental by its Id
     }
 
     @Operation(summary = "Create rental", description = "Create rental with parameters (name, surface, price, picture and description) and owner_id from token")
@@ -40,8 +40,7 @@ public class RentalController {
         //Get user from token and Users table
         String email = tokenService.getEmailFromToken(token);
         User user = userService.findUserByEmail(email);
-        //Create rental with id and rental
-        Rental rentalCreated = rentalService.createRental(user.getId(), rental);
+        Rental rentalCreated = rentalService.createRental(user.getId(), rental); //Create rental with id and rental
         return Objects.requireNonNullElseGet(rentalCreated, Rental::new);
     }
 
@@ -51,10 +50,8 @@ public class RentalController {
         //Get user from token and Users table
         String email = tokenService.getEmailFromToken(token);
         User user = userService.findUserByEmail(email);
-        //Update rental in database
-        Rental rentalUpdated = rentalService.updateRental(id, user.getId(), rental);
-        //Return rental update, of new rental if KO
-        return Objects.requireNonNullElseGet(rentalUpdated, Rental::new);
+        Rental rentalUpdated = rentalService.updateRental(id, user.getId(), rental); //Update rental in database
+        return Objects.requireNonNullElseGet(rentalUpdated, Rental::new); //Return rental update, or empty rental if not found
     }
 
 

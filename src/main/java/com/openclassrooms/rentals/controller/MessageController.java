@@ -27,9 +27,9 @@ public class MessageController {
     @PostMapping("/api/messages")
     public Message createMessage(@RequestHeader("Authorization") String token, @RequestBody Message message){
         //Get user from token and Users table
-        String email = tokenService.getEmailFromToken(token);
-        User user = userService.findUserByEmail(email);
-        Message messageCreated = messageService.createMessage(user.getId(), message);
-        return Objects.requireNonNullElseGet(messageCreated, Message::new);
+        String email = tokenService.getEmailFromToken(token); //Get email from token
+        User user = userService.findUserByEmail(email); //Find user
+        Message messageCreated = messageService.createMessage(user.getId(), message); //Get message
+        return Objects.requireNonNullElseGet(messageCreated, Message::new); //Return message or empty message (if not found)
     }
 }

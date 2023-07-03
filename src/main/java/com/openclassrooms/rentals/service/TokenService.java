@@ -34,7 +34,7 @@ public class TokenService {
 
     //Extract email from token
     public String getEmailFromToken(String token){
-        token = deleteBearerFromToken(token);
+        token = deleteBearerFromToken(token); //Delete "Bearer" from token
         if (token != null) {
             Jwt claims = this.decoder.decode(token);
             return claims.getSubject();

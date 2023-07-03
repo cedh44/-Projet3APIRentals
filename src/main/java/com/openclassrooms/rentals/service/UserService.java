@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 @Data
 @Service
 public class UserService {
@@ -16,24 +17,19 @@ public class UserService {
     private UserRepository userRepository;
     private static final DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-   //User creation
+    //User creation
     public User createUser(User user) {
         user.setCreatedAt(new Date()); //Set today
-        User createdUser = userRepository.save(user);
-        return createdUser;
+        return userRepository.save(user); //Save user in database
     }
 
     //Find user with email as parameter
-    public User findUserByEmail(String email){
-        return userRepository.findByEmail(email);
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email); //Find user by its email in database
     }
 
-    public boolean existsByEmail(String email){
-        return userRepository.existsByEmail(email);
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email); //Check id user exists in database
     }
 
-    //Find user by email and password (for login)
-    public User loginUser(User user){
-        return userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
-    }
 }

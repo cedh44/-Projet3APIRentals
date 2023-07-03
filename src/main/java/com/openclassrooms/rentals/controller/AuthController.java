@@ -5,6 +5,7 @@ import com.openclassrooms.rentals.service.TokenService;
 import com.openclassrooms.rentals.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,14 +17,19 @@ public class AuthController {
     }
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
     private UserService userService;
 
     @Operation(summary = "Login", description = "Allow a user to log in and return a token")
     @PostMapping("/api/auth/login")
     public String login(@RequestBody User user) {
-        User userFound = userService.loginUser(user);
+        User userFound = userService.findUserByEmail(user.getEmail());
         if (userFound != null) {
-            return tokenService.generateToken(userFound.getEmail());
+            //Check if password from login is equal to password encoded in database
+            if (!passwordEncoder.matches(user.getPassword(), userFound.getPassword()))
+                return "error"; //Check if password from login is equal to password in database
+            else return tokenService.generateToken(userFound.getEmail()); //Get user and generate a token
         } else {
             return "error";
         }
@@ -35,9 +41,10 @@ public class AuthController {
         //Name is mandatory to create a user. For email and password, checked by @Column(nullable = false) in User class
         if (user.getName() == null) return "Name is mandatory";
         if (userService.existsByEmail(user.getEmail())) return "error"; //User exist
-        User userCreated = userService.createUser(user);
+        user.setPassword(passwordEncoder.encode(user.getPassword())); //Encode password
+        User userCreated = userService.createUser(user); //Call service to create user in database
         if (userCreated != null) {
-            return tokenService.generateToken(user.getEmail());
+            return tokenService.generateToken(user.getEmail()); //If user created, then generate token
         } else {
             return "error";
         }
@@ -46,12 +53,9 @@ public class AuthController {
     @Operation(summary = "Get user informations", description = "return id, name, email, date creation and date update of user connected")
     @GetMapping("/api/auth/me") //Decode token, find user in BDD and return id, name, email, created_at and updated_at
     public User getUser(@RequestHeader("Authorization") String token) {
-        //Decode token and extract email
-        String email = tokenService.getEmailFromToken(token);
-        //Find user in database
-        User user = userService.findUserByEmail(email);
-        //Security  : set password to ""
-        user.setPassword("");
+        String email = tokenService.getEmailFromToken(token); //Decode token and extract email
+        User user = userService.findUserByEmail(email); //Find user in database
+        user.setPassword(""); //Security  : set password to ""
         return user;
     }
 

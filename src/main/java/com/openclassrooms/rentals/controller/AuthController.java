@@ -1,9 +1,11 @@
 package com.openclassrooms.rentals.controller;
 
+import com.openclassrooms.rentals.dto.UserDto;
 import com.openclassrooms.rentals.model.User;
 import com.openclassrooms.rentals.service.TokenService;
 import com.openclassrooms.rentals.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,8 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Operation(summary = "Login", description = "Allow a user to log in and return a token")
     @PostMapping("/api/auth/login")
@@ -52,11 +56,13 @@ public class AuthController {
 
     @Operation(summary = "Get user informations", description = "return id, name, email, date creation and date update of user connected")
     @GetMapping("/api/auth/me") //Decode token, find user in BDD and return id, name, email, created_at and updated_at
-    public User getUser(@RequestHeader("Authorization") String token) {
+    public UserDto getUser(@RequestHeader("Authorization") String token) {
         String email = tokenService.getEmailFromToken(token); //Decode token and extract email
-        User user = userService.findUserByEmail(email); //Find user in database
-        user.setPassword(""); //Security  : set password to ""
-        return user;
+        return convertToDto(userService.findUserByEmail(email)); //Conversion DTO
+    }
+
+    private UserDto convertToDto(User user) {
+        return modelMapper.map(user, UserDto.class);
     }
 
 }

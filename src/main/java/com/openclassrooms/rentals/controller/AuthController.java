@@ -27,7 +27,8 @@ public class AuthController {
 
     @Operation(summary = "Login", description = "Allow a user to log in and return a token")
     @PostMapping("/api/auth/login")
-    public String login(@RequestBody User user) {
+    public String login(@RequestBody UserDto userDto) {
+        User user = convertToEntity(userDto);
         User userFound = userService.findUserByEmail(user.getEmail());
         if (userFound != null) {
             //Check if password from login is equal to password encoded in database
@@ -41,7 +42,8 @@ public class AuthController {
 
     @Operation(summary = "Register a new user", description = "Check if user exists, create a user and return a token")
     @PostMapping("/api/auth/register") //Create a new user
-    public String register(@RequestBody User user) {
+    public String register(@RequestBody UserDto userDto) {
+        User user = convertToEntity(userDto);
         //Name is mandatory to create a user. For email and password, checked by @Column(nullable = false) in User class
         if (user.getName() == null) return "Name is mandatory";
         if (userService.existsByEmail(user.getEmail())) return "error"; //User exist
@@ -54,7 +56,7 @@ public class AuthController {
         }
     }
 
-    @Operation(summary = "Get user informations", description = "return id, name, email, date creation and date update of user connected")
+    @Operation(summary = "Get user informations", description = "return name, email of user connected")
     @GetMapping("/api/auth/me") //Decode token, find user in BDD and return id, name, email, created_at and updated_at
     public UserDto getUser(@RequestHeader("Authorization") String token) {
         String email = tokenService.getEmailFromToken(token); //Decode token and extract email
@@ -62,7 +64,13 @@ public class AuthController {
     }
 
     private UserDto convertToDto(User user) {
-        return modelMapper.map(user, UserDto.class);
+        UserDto userDto = modelMapper.map(user, UserDto.class);
+        userDto.setPassword(""); //Security : email should never be returned to client !!!
+        return userDto;
+    }
+
+    private User convertToEntity(UserDto userDto) {
+        return modelMapper.map(userDto, User.class);
     }
 
 }

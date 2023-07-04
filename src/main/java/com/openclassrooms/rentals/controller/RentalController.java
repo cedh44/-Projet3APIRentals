@@ -1,17 +1,18 @@
 package com.openclassrooms.rentals.controller;
 
 
+import com.openclassrooms.rentals.dto.RentalDto;
 import com.openclassrooms.rentals.model.Rental;
-import com.openclassrooms.rentals.model.User;
+import com.openclassrooms.rentals.service.DocumentStorageService;
 import com.openclassrooms.rentals.service.RentalService;
 import com.openclassrooms.rentals.service.TokenService;
 import com.openclassrooms.rentals.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.util.Objects;
+import java.io.IOException;
 
 @RestController
 public class RentalController {
@@ -21,6 +22,10 @@ public class RentalController {
     private TokenService tokenService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private DocumentStorageService documentStorageService;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Operation(summary = "Get all rentals", description = "Return all rentals")
     @GetMapping("/api/rentals")
@@ -36,23 +41,29 @@ public class RentalController {
 
     @Operation(summary = "Create rental", description = "Create rental with parameters (name, surface, price, picture and description) and owner_id from token")
     @PostMapping("/api/rentals")
-    public Rental createRental(@RequestHeader("Authorization") String token, @ModelAttribute Rental rental) {
+    public Rental createRental(@RequestHeader("Authorization") String token, @ModelAttribute RentalDto rentalDto) throws IOException {
+        //Save file and get path and file name
+        String pathAndFileName = "";
+        if (rentalDto.getPicture() != null) pathAndFileName = documentStorageService.storeFile(rentalDto.getPicture());
         //Get user from token and Users table
         String email = tokenService.getEmailFromToken(token);
-        User user = userService.findUserByEmail(email);
-        Rental rentalCreated = rentalService.createRental(user.getId(), rental); //Create rental with id and rental
-        return Objects.requireNonNullElseGet(rentalCreated, Rental::new);
+        Rental rentalToCreate = convertToEntity(rentalDto);
+        return rentalService.createRental(userService.findUserByEmail(email).getId(), pathAndFileName, rentalToCreate); //Create rental with id and rentalToCreate
     }
 
     @Operation(summary = "Update rental", description = "Update rental by Id in url and  with parameters(name, surface, price, picture and description) and owner_id from token")
     @PutMapping("/api/rentals/{id}")
-    public Rental updateRentalById(@PathVariable("id") Long id, @RequestHeader("Authorization") String token, @ModelAttribute Rental rental) {
+    public Rental updateRentalById(@PathVariable("id") Long id, @RequestHeader("Authorization") String token, @ModelAttribute RentalDto rentalDto) throws IOException {
+        //Save file and get path and file name
+        String pathAndFileName = "";
+        if (rentalDto.getPicture() != null) pathAndFileName = documentStorageService.storeFile(rentalDto.getPicture());
         //Get user from token and Users table
         String email = tokenService.getEmailFromToken(token);
-        User user = userService.findUserByEmail(email);
-        Rental rentalUpdated = rentalService.updateRental(id, user.getId(), rental); //Update rental in database
-        return Objects.requireNonNullElseGet(rentalUpdated, Rental::new); //Return rental update, or empty rental if not found
+        return rentalService.updateRental(id, userService.findUserByEmail(email).getId(), pathAndFileName, convertToEntity(rentalDto)); //Update rental in database
     }
 
 
+    private Rental convertToEntity(RentalDto rentalDto) {
+        return modelMapper.map(rentalDto, Rental.class);
+    }
 }

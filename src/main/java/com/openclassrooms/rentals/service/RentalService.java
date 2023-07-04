@@ -28,15 +28,16 @@ public class RentalService {
     }
 
     //Create rental
-    public Rental createRental(Long ownerId, Rental rental){
+    public Rental createRental(Long ownerId, String pathAndFileName, Rental rental){
         //Set create date
         rental.setCreatedAt(new Date());
         rental.setOwner_id(ownerId);
+        rental.setPicture(pathAndFileName);
         return rentalRepository.save(rental);
     }
 
     //Update rental
-    public Rental updateRental(Long rentalId, Long ownerId, Rental freshRental) {
+    public Rental updateRental(Long rentalId, Long ownerId, String pathAndFileName, Rental freshRental) {
         Rental rentalToUpdate = rentalRepository.findById(rentalId).orElse(null);
         //Check if rentals in DBB and same owner
         if(rentalToUpdate != null && ownerId.equals(rentalToUpdate.getOwner_id())){
@@ -48,6 +49,7 @@ public class RentalService {
             if(freshRental.getDescription() != null)rentalToUpdate.setDescription(freshRental.getDescription());
             //Set update date
             rentalToUpdate.setUpdatedAt(new Date());
+            rentalToUpdate.setPicture(pathAndFileName);
             return rentalRepository.save(rentalToUpdate);
         } else {
             return new Rental();

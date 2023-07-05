@@ -29,9 +29,7 @@ public class Rental {
     @Column(nullable = false)
     private Long owner_id;
 
-    @Column(name="created_at")
-    private Date createdAt;
+    private Date created_at;
 
-    @Column(name="updated_at")
-    private Date updatedAt;
+    private Date updated_at;
 }

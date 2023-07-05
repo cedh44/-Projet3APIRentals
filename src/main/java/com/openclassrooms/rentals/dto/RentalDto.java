@@ -2,12 +2,18 @@ package com.openclassrooms.rentals.dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
+
 public class RentalDto {
     private String name;
     private Double surface;
     private Double price;
     private MultipartFile picture;
     private String description;
+
+    private Date created_at;
+
+    private Date updated_at;
 
     public String getName() {
         return name;
@@ -47,5 +53,21 @@ public class RentalDto {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Date getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
+    }
+
+    public Date getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(Date updated_at) {
+        this.updated_at = updated_at;
     }
 }

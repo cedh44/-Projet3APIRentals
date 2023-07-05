@@ -19,7 +19,7 @@ public class UserService {
 
     //User creation
     public User createUser(User user) {
-        user.setCreatedAt(new Date()); //Set today
+        user.setCreated_at(new Date()); //Set today
         return userRepository.save(user); //Save user in database
     }
 

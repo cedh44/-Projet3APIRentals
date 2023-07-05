@@ -20,9 +20,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(name="created_at")
-    private Date createdAt;
+    @Column
+    private Date created_at;
 
-    @Column(name="updated_at")
-    private Date updatedAt;
+    @Column
+    private Date updated_at;
 }

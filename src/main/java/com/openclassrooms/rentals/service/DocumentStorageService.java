@@ -14,9 +14,11 @@ import java.nio.file.StandardCopyOption;
 @Service
 public class DocumentStorageService {
     private final Path fileStorageLocation;
+    private final String localStorage = "/Users/a240707/Temp/StorageRentalPics";
+    private final String fileServerLocation = "http://localhost:8081/";
 
     public DocumentStorageService() throws IOException {
-        this.fileStorageLocation = Paths.get("/Users/a240707/Temp")
+        this.fileStorageLocation = Paths.get(localStorage)
                 .toAbsolutePath().normalize();
         Files.createDirectories(this.fileStorageLocation);
     }
@@ -29,7 +31,7 @@ public class DocumentStorageService {
         Path targetLocation = this.fileStorageLocation.resolve(originalFileName);
         Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-        return targetLocation.toString();
+        return fileServerLocation+originalFileName;
 
     }
 

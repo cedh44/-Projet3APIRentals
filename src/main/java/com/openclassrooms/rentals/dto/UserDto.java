@@ -8,9 +8,7 @@ public class UserDto {
     private String name;
     private String email;
     private String password;
-
     private Date created_at;
-
     private Date updated_at;
 
     // standard getters and setters

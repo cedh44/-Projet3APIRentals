@@ -39,7 +39,6 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(auth -> auth.antMatchers("/api/auth/register/**", "/api/auth/login/**","/v2/api-docs/**","/swagger-ui/**","/swagger-resources/**").permitAll().anyRequest().authenticated())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt) //Enable Jwt-encoded bearer token support
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //stateless (pas de session, mais token)
-                .httpBasic(withDefaults()) //Form login to authenticate users
                 .build();
     }
 

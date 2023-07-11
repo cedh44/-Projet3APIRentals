@@ -30,7 +30,7 @@ public class AuthController {
     @Operation(summary = "Login", description = "Allow a user to log in and return a token")
     @PostMapping("/api/auth/login")
     public ResponseEntity<Object> login(@RequestBody UserDto userDto) {
-        User user = convertToEntity(userDto);
+        User user = convertToEntity(userDto); //Convert to User object
         User userFound = userService.findUserByEmail(user.getEmail());
         if (userFound != null) {
             //Check if password from login is equal to password encoded in database

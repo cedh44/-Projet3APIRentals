@@ -32,7 +32,6 @@ public class DocumentStorageService {
         Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
         return fileServerLocation+originalFileName;
-
     }
 
 

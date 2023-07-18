@@ -9,6 +9,8 @@ import com.openclassrooms.rentals.service.DocumentStorageService;
 import com.openclassrooms.rentals.service.RentalService;
 import com.openclassrooms.rentals.service.TokenService;
 import com.openclassrooms.rentals.service.UserService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
 import io.swagger.v3.oas.annotations.Operation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +35,9 @@ public class RentalController {
     private ModelMapper modelMapper;
 
     @Operation(summary = "Get all rentals", description = "Return all rentals")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "jwtToken")})
     @GetMapping("/api/rentals")
-    public RentalsListDto getAllRentals(@RequestHeader("Authorization") String token) {
+    public RentalsListDto getAllRentals() {
         RentalsListDto rentalsListDto = new RentalsListDto();
         ArrayList<Rental> rentalList = new ArrayList<>();
         rentalService.getAll().forEach(rentalList::add);
@@ -43,13 +46,15 @@ public class RentalController {
     }
 
     @Operation(summary = "Get rental by Id", description = "Return rental by Id")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "jwtToken")})
     @GetMapping("/api/rentals/{id}")
-    public Rental getRentalById(@RequestHeader("Authorization") String token, @PathVariable("id") Long id) {
+    public Rental getRentalById(@PathVariable("id") Long id) {
+
         return rentalService.getRental(id); //return rental by its Id
     }
 
     @Operation(summary = "Create rental", description = "Create rental with parameters (name, surface, price, picture and description) and owner_id from token")
-    @PostMapping(name = "/api/rentals", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/api/rentals", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<GenericMessageDto> createRental(@RequestHeader("Authorization") String token, @Valid @ModelAttribute RentalDto rentalDto) throws IOException {
         String pathAndFileName = "";
         if (rentalDto.getPicture() != null)

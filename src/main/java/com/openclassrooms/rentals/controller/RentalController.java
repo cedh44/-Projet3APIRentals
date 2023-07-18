@@ -34,8 +34,7 @@ public class RentalController {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Operation(summary = "Get all rentals", description = "Return all rentals")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "jwtToken")})
+    @ApiOperation(value = "Get all rentals", notes= "Return all rentals", authorizations = {@Authorization(value = "jwtToken")})
     @GetMapping("/api/rentals")
     public RentalsListDto getAllRentals() {
         RentalsListDto rentalsListDto = new RentalsListDto();
@@ -45,8 +44,8 @@ public class RentalController {
         return rentalsListDto; //Return all rentals from database
     }
 
-    @Operation(summary = "Get rental by Id", description = "Return rental by Id")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "jwtToken")})
+
+    @ApiOperation(value = "Get rental by Id", notes ="Return rental by Id", authorizations = {@Authorization(value = "jwtToken")})
     @GetMapping("/api/rentals/{id}")
     public Rental getRentalById(@PathVariable("id") Long id) {
 

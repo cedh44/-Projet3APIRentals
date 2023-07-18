@@ -1,6 +1,7 @@
 package com.openclassrooms.rentals.controller;
 
 import com.openclassrooms.rentals.dto.LoginDto;
+import com.openclassrooms.rentals.dto.RegisterDto;
 import com.openclassrooms.rentals.dto.TokenDto;
 import com.openclassrooms.rentals.dto.UserDto;
 import com.openclassrooms.rentals.model.User;
@@ -43,8 +44,11 @@ public class AuthController {
 
     @Operation(summary = "Register a new user", description = "Check if user exists, create a user and return a token")
     @PostMapping("/api/auth/register") //Create a new user
-    public ResponseEntity<Object> register(@Valid @RequestBody UserDto userDto) {
-        User user = convertToEntity(userDto);
+    public ResponseEntity<Object> register(@Valid @RequestBody RegisterDto registerDto) {
+        User user = new User();
+        user.setName(registerDto.getName());
+        user.setEmail(registerDto.getEmail());
+        user.setPassword(registerDto.getPassword());
         if (userService.existsByEmail(user.getEmail())) return ResponseEntity.badRequest().body("error");; //User exist
         user.setPassword(passwordEncoder.encode(user.getPassword())); //Encode password
         User userCreated = userService.createUser(user); //Call service to create user in database
@@ -67,10 +71,6 @@ public class AuthController {
         UserDto userDto = modelMapper.map(user, UserDto.class);
         userDto.setPassword(""); //Security : email should never be returned to client !!!
         return userDto;
-    }
-
-    private User convertToEntity(UserDto userDto) {
-        return modelMapper.map(userDto, User.class);
     }
 
 }

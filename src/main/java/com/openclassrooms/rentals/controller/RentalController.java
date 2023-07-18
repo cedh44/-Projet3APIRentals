@@ -12,9 +12,10 @@ import com.openclassrooms.rentals.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -39,8 +40,6 @@ public class RentalController {
         rentalService.getAll().forEach(rentalList::add);
         rentalsListDto.setRentals(rentalList);
         return rentalsListDto; //Return all rentals from database
-
-
     }
 
     @Operation(summary = "Get rental by Id", description = "Return rental by Id")
@@ -50,8 +49,8 @@ public class RentalController {
     }
 
     @Operation(summary = "Create rental", description = "Create rental with parameters (name, surface, price, picture and description) and owner_id from token")
-    @PostMapping(name = "/api/rentals", consumes = "multipart/form-data")
-    public ResponseEntity<GenericMessageDto> createRental(@RequestHeader("Authorization") String token, @ModelAttribute RentalDto rentalDto) throws IOException {
+    @PostMapping(name = "/api/rentals", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<GenericMessageDto> createRental(@RequestHeader("Authorization") String token, @Valid @ModelAttribute RentalDto rentalDto) throws IOException {
         String pathAndFileName = "";
         if (rentalDto.getPicture() != null)
             pathAndFileName = documentStorageService.storeFile(rentalDto.getPicture()); //Save file and get path and file name
@@ -64,7 +63,7 @@ public class RentalController {
 
     @Operation(summary = "Update rental", description = "Update rental by Id in url and  with parameters(name, surface, price, picture and description) and owner_id from token")
     @PutMapping("/api/rentals/{id}")
-    public ResponseEntity<GenericMessageDto> updateRentalById(@PathVariable("id") Long id, @RequestHeader("Authorization") String token, @ModelAttribute RentalDto rentalDto) throws IOException {
+    public ResponseEntity<GenericMessageDto> updateRentalById(@PathVariable("id") Long id, @RequestHeader("Authorization") String token, @Valid @ModelAttribute RentalDto rentalDto) throws IOException {
         //Get user from token and Users table
         String email = tokenService.getEmailFromToken(token);
         Rental rental = rentalService.updateRental(id, userService.findUserByEmail(email).getId(), convertToEntity(rentalDto)); //Update rental in database

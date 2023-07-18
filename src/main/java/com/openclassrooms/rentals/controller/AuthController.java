@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 
 @RestController
 public class AuthController {
@@ -25,7 +26,7 @@ public class AuthController {
 
     @Operation(summary = "Login", description = "Allow a user to log in and return a token")
     @PostMapping("/api/auth/login")
-    public ResponseEntity<Object> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<Object> login(@Valid @RequestBody LoginDto loginDto) {
         User user = new User();
         user.setEmail(loginDto.getEmail());
         user.setPassword(loginDto.getPassword());
@@ -42,10 +43,8 @@ public class AuthController {
 
     @Operation(summary = "Register a new user", description = "Check if user exists, create a user and return a token")
     @PostMapping("/api/auth/register") //Create a new user
-    public ResponseEntity<Object> register(@RequestBody UserDto userDto) {
+    public ResponseEntity<Object> register(@Valid @RequestBody UserDto userDto) {
         User user = convertToEntity(userDto);
-        //Name is mandatory to create a user. For email and password, checked by @Column(nullable = false) in User class
-        if (user.getName() == null) return ResponseEntity.badRequest().body("Name is mandatory");
         if (userService.existsByEmail(user.getEmail())) return ResponseEntity.badRequest().body("error");; //User exist
         user.setPassword(passwordEncoder.encode(user.getPassword())); //Encode password
         User userCreated = userService.createUser(user); //Call service to create user in database

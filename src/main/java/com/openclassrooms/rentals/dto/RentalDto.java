@@ -1,10 +1,11 @@
 package com.openclassrooms.rentals.dto;
 
 import org.springframework.web.multipart.MultipartFile;
-
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 public class RentalDto {
+    @NotBlank(message = "name is mandatory")
     private String name;
     private Double surface;
     private Double price;

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import javax.validation.Valid;
 
 @RestController
 public class MessageController {
@@ -28,7 +29,7 @@ public class MessageController {
 
     @Operation(summary = "Message", description = "Send a message with parameters : rental_id and message")
     @PostMapping("/api/messages")
-    public ResponseEntity<GenericMessageDto> createMessage(@RequestHeader("Authorization") String token, @RequestBody MessageDto messageDto) {
+    public ResponseEntity<GenericMessageDto> createMessage(@RequestHeader("Authorization") String token, @Valid @RequestBody MessageDto messageDto) {
         //Get user from token and Users table
         String email = tokenService.getEmailFromToken(token); //Get email from token
         Message message = messageService.createMessage(userService.findUserByEmail(email).getId(), convertToEntity(messageDto)); //Create message

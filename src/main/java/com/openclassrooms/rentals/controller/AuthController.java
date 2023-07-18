@@ -1,5 +1,6 @@
 package com.openclassrooms.rentals.controller;
 
+import com.openclassrooms.rentals.dto.LoginDto;
 import com.openclassrooms.rentals.dto.TokenDto;
 import com.openclassrooms.rentals.dto.UserDto;
 import com.openclassrooms.rentals.model.User;
@@ -14,12 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class AuthController {
-    private final TokenService tokenService;
-
-    public AuthController(TokenService tokenService) {
-        this.tokenService = tokenService;
-    }
-
+    @Autowired TokenService tokenService;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -29,8 +25,10 @@ public class AuthController {
 
     @Operation(summary = "Login", description = "Allow a user to log in and return a token")
     @PostMapping("/api/auth/login")
-    public ResponseEntity<Object> login(@RequestBody UserDto userDto) {
-        User user = convertToEntity(userDto); //Convert to User object
+    public ResponseEntity<Object> login(@RequestBody LoginDto loginDto) {
+        User user = new User();
+        user.setEmail(loginDto.getEmail());
+        user.setPassword(loginDto.getPassword());
         User userFound = userService.findUserByEmail(user.getEmail());
         if (userFound != null) {
             //Check if password from login is equal to password encoded in database

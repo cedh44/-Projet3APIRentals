@@ -11,7 +11,7 @@ Pré-requis :
 1. Clonez le dépôt git avec la commande suivante dans un terminal : `git clone https://github.com/cedh44/Projet3APIRentals`
 2. Installation des dépendances et compilation : placez vous dans le répertoire racine du projet et tapez `mvn clean install`
 3. Appliquez le script sql suivant, à la racine du projet, à l'aide de la commande suivante : mysql -u root -p rentals < src/main/resources/sql/script.sql
-4. Modifier le fichier application.properties pour ajouter le user/mot de passe mysql aux propriétés spring.datasource.username et spring.datasource.password
+4. Modifier le fichier application.properties pour ajouter les variables d'environnement aux propriétés spring.datasource.username et spring.datasource.password (cela concerne le couplet user/mot de passe de la base mysql)
 
 ## Lancer l'application
 
